@@ -1,0 +1,4 @@
+package rwssample
+
+pkgs = contrib
+sourcedir = src
