@@ -5,7 +5,7 @@ import Control.Monad.Reader
 import Control.Monad.Writer
 import Control.Monad.State
 
-execRWST : RWS r w s () -> r -> s -> (s, w)
+execRWST : RWS r w s a -> r -> s -> (s, w)
 execRWST rwst env state =
   let (s, r, l) = runIdentity (runRWST rwst env state) in (r, l)
 
