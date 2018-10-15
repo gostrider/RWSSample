@@ -1,8 +1,6 @@
 module FreeAp
 
 import Free
-import FreeApplicative
-
 
 record User where
   constructor MkUser
@@ -16,13 +14,14 @@ data UserOperation x
   | ListUsers x
 
 
--- data ExecStrategy (fa : Type -> Type) where
---   seq : Free UserOperation fa
---   par : FreeAp UserOperation fa
+-- Program f a = FreeAp (Free f) a
+-- Program f a = Free (FreeAp f) a
+
 
 -- createUser : String -> Int -> User
 -- getUserById : String -> Maybe User
 -- listUsers : List User
+
 
 Functor UserOperation where
   map f (CreateUser g) = CreateUser ?holeFunctor_1
