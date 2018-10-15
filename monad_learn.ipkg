@@ -1,4 +1,4 @@
-package rwssample
+package monadlearn
 
 pkgs = contrib
 sourcedir = src
