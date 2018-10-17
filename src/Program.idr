@@ -7,14 +7,14 @@ import Free
 data Action x
   = Get (String -> x)
   | Put (List String) x
-  -- | Show String x
+  | Show String x
   | Exit
 
 
 Functor Action where
   map f (Get g)    = Get $ f . g
   map f (Put x y)  = Put x $ f y
-  -- map f (Show x y) = Show x $ f y
+  map f (Show x y) = Show x $ f y
   map f Exit       = Exit
 
 
@@ -34,8 +34,8 @@ puts : List String -> Free Action ()
 puts x = liftFree $ Put x ()
 
 
--- shows : String -> Free Action ()
--- shows x = liftFree $ Show x ()
+shows : String -> Free Action ()
+shows x = liftFree $ Show x ()
 
 
 exit : Free Action r
@@ -47,8 +47,8 @@ evalWith (Pure x)  = pure x
 evalWith (Bind fm) =
   case fm of
     (Get f)    => getLine >>= evalWith . f
-    -- (Show s t) => do putStrLn s
-    --                  evalWith t
+    (Show s t) => do putStrLn s
+                     evalWith t
     (Put s t)  => do putStrLn (show s)
                      evalWith t
     Exit       => Sys.exitSuccess
