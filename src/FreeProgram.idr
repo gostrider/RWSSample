@@ -14,8 +14,8 @@ record Store where
 
 
 data UserOperation x
-  = CreateUser (String -> Int -> x)
-  | GetUserByID (String -> x)
+  = CreateUser (String -> Int -> x) y
+  | GetUserByID Store (String -> x)
   | ListUsers Store x
 
 
@@ -29,8 +29,8 @@ data UserOperation x
 
 
 Functor UserOperation where
-  map f (CreateUser g) = CreateUser ?g_rhs
-  map f (GetUserByID g) = GetUserByID $ f . g
+  map f (CreateUser g x) = CreateUser ?g_rhs x
+  map f (GetUserByID x g) = GetUserByID x $ f . g
   map f (ListUsers x y) = ListUsers x $ f y
 
 
@@ -53,7 +53,7 @@ findUser (MkStore (u :: us)) user_id =
 
 
 show_users : Store -> List User
-show_users store = items store
+show_users = items
 
 
 createUser : Store -> String -> Int -> Free UserOperation Store
@@ -70,19 +70,19 @@ listUsers store = liftFree $ ListUsers store ()
 
 userOps : Store -> Free UserOperation ()
 userOps store = do
---   store'    <- createUser store "user1" 20
---   -- one_user  <- getUserById store "user1"
-  listUsers store
+  store'    <- createUser store "user1" 20
+  one_user  <- getUserById store' "user1"
+  listUsers store'
   pure ()
 
 
 run : Free UserOperation a -> IO a
 run (Pure x) = pure x
 run (Bind x) = case x of
-  (CreateUser f) => ?run_rhs_1
-  (GetUserByID f) => ?run_rhs_2
-  (ListUsers users z) => do putStrLn ""
-                            run z
+  (CreateUser f s)  => ?run_rhs_1
+  (GetUserByID s f) => ?run_rhs_2
+  (ListUsers s z) => do putStrLn ""
+                        run z
 
 
 all_users : IO ()
